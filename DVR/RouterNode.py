@@ -69,15 +69,20 @@ class RouterNode:
         return bUpdated
 
     def sendUpdateToNeighbors(self):
-        reversePoisoning = True
 
         for nb_y in range(self.sim.NUM_NODES):
-            pk = RouterPacket(self.myID, nb_y, self.routercosts[self.myID])
-
-            if reversePoisoning:
-                for x in range(self.sim.NUM_NODES):
-                    if self.routes[x] == nb_y:
-                        pk.mincost[x] = self.sim.INFINITY
+            if nb_y == self.myID :
+                continue
+            else:
+                
+                pk = RouterPacket(self.myID, nb_y, self.routercosts[self.myID])
+                
+                if self.sim.POISONREVERSE:
+                   if nb_y not in self.routes:
+                       pk.mincost[nb_y]=self.sim.INFINITY
+                    #for x in range(self.sim.NUM_NODES):
+                        #if self.routes[x] == nb_y:
+                            #pk.mincost[x] = self.sim.INFINITY
 
             self.sendUpdate(pk)
 
