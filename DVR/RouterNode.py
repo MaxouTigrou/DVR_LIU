@@ -73,18 +73,17 @@ class RouterNode:
         for nb_y in range(self.sim.NUM_NODES):
             if nb_y == self.myID :
                 continue
-            else:
                 
-                pk = RouterPacket(self.myID, nb_y, self.routercosts[self.myID])
+            pk = RouterPacket(self.myID, nb_y, self.routercosts[self.myID])
                 
-                if self.sim.POISONREVERSE:
-                   if nb_y not in self.routes:
-                       pk.mincost[nb_y]=self.sim.INFINITY
-                    #for x in range(self.sim.NUM_NODES):
-                        #if self.routes[x] == nb_y:
-                            #pk.mincost[x] = self.sim.INFINITY
-
+            if self.sim.POISONREVERSE:
+                for x in range(self.sim.NUM_NODES):
+                    # Test if a router is used to go through another router
+                    if self.routes[x] == nb_y and x != nb_y:
+                        pk.mincost[x] = self.sim.INFINITY
+                self.myGUI.println(f"Packets from {self.myID} to {nb_y} send costs = {pk.mincost}")
             self.sendUpdate(pk)
+
 
     def recvUpdate(self, pkt):
         bUpdated = False
